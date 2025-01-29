@@ -1,0 +1,71 @@
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Richiesta Preventivo/Ordine</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="background-image"></div>
+  <div class="container">
+    <header>
+      Benvenuti in A.R. Auto snc
+      <div class="notice">È richiesto un account WhatsApp per utilizzare questa pagina.</div>
+    </header>
+    <form id="requestForm" class="request-form">
+      <label>Seleziona:</label>
+      <div class="request-type">
+        <label>
+          <input type="radio" name="userType" value="privato" checked>
+          <span>Privato</span>
+        </label>
+        <label>
+          <input type="radio" name="userType" value="azienda">
+          <span>Azienda</span>
+        </label>
+      </div>
+      
+      <label for="name">Nome e Cognome</label>
+      <input type="text" id="name" name="name" required>
+      
+      <div id="companyWrapper">
+        <label for="company">Ragione Sociale dell’Officina</label>
+        <input type="text" id="company" name="company">
+      </div>
+      
+      <label for="vehicle">Targa o Numero di Telaio del Veicolo</label>
+      <input type="text" id="vehicle" name="vehicle" required style="text-transform: uppercase;">
+      
+      <label>Tipo di richiesta</label>
+      <div class="request-type">
+        <label>
+          <input type="radio" name="requestType" value="Preventivo" checked>
+          <span>Preventivo</span>
+        </label>
+        <label>
+          <input type="radio" name="requestType" value="Ordine">
+          <span>Ordine</span>
+        </label>
+      </div>
+
+      <label for="priority">Priorità</label>
+      <select id="priority" name="priority" required>
+        <option value="bassa" style="color: green;">Bassa</option>
+        <option value="media" style="color: yellow;">Media</option>
+        <option value="alta" style="color: red;">Alta</option>
+      </select>
+
+      <label for="description">Descrizione della Richiesta</label>
+      <textarea id="description" name="description" maxlength="500"></textarea>
+      
+      <button type="submit" id="submitBtn">Invia</button>
+    </form>
+    <div id="successMessage" class="success-message">
+      Richiesta inviata con successo su WhatsApp! Riceverai una risposta entro circa 30 minuti. ID richiesta: <span id="requestId"></span><br>
+      Assicurati di inviare l'ordine su WhatsApp!
+    </div>
+  </div>
+</body>
+</html>
