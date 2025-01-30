@@ -95,6 +95,36 @@
         <option value="alta">Alta Urgenza</option>
       </select>
       
+      <!-- Accordion menu for pickup date/time -->
+      <div id="pickupWrapper" class="pickup-wrapper" style="display: none;">
+        <button type="button" class="accordion" id="pickupAccordion">
+          <span class="material-icons">schedule</span>
+          Indica la data e l'ora preferita per il ritiro del tuo ricambio
+          <span class="material-icons accordion-icon">expand_more</span>
+        </button>
+        <div class="accordion-content">
+          <div class="pickup-fields">
+            <div class="pickup-field">
+              <label for="pickupDate" class="field-label">
+                <span class="material-icons">calendar_today</span>
+                Data di ritiro
+              </label>
+              <input type="date" id="pickupDate" name="pickupDate">
+              <div class="error-message" id="dateError"></div>
+            </div>
+            
+            <div class="pickup-field">
+              <label for="pickupTime" class="field-label">
+                <span class="material-icons">access_time</span>
+                Ora di ritiro
+              </label>
+              <input type="time" id="pickupTime" name="pickupTime" min="09:00" max="18:00" step="900">
+              <div class="error-message" id="timeError"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="description-header">
         <label for="description" class="field-label">
           <span class="material-icons">description</span>

@@ -11,6 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDataBtn = document.getElementById('clearDataBtn');
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
+  const pickupWrapper = document.getElementById('pickupWrapper');
+  const pickupAccordion = document.getElementById('pickupAccordion');
+  const accordionContent = pickupAccordion.nextElementSibling;
+  const pickupDate = document.getElementById('pickupDate');
+  const pickupTime = document.getElementById('pickupTime');
+  const dateError = document.getElementById('dateError');
+  const timeError = document.getElementById('timeError');
 
   // Local Storage keys
   const STORAGE_KEY = 'userFormData';
@@ -76,6 +83,68 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.style.backgroundColor = '#007aff';
   }
 
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  pickupDate.min = today;
+
+  // Accordion toggle
+  pickupAccordion.addEventListener('click', () => {
+    pickupAccordion.classList.toggle('active');
+    const isActive = pickupAccordion.classList.contains('active');
+    accordionContent.classList.toggle('active', isActive);
+  });
+
+  // Show/hide pickup section based on user type and request type
+  function updatePickupVisibility() {
+    const isPrivate = form.querySelector('input[name="userType"]:checked').value === 'privato';
+    const isOrder = form.querySelector('input[name="requestType"]:checked').value === 'Ordine';
+    
+    pickupWrapper.style.display = (isPrivate && isOrder) ? 'block' : 'none';
+    
+    // Reset fields when hidden
+    if (!isPrivate || !isOrder) {
+      pickupDate.value = '';
+      pickupTime.value = '';
+      dateError.style.display = 'none';
+      timeError.style.display = 'none';
+      pickupAccordion.classList.remove('active');
+      accordionContent.classList.remove('active');
+    }
+  }
+
+  // Add event listeners for changes
+  form.querySelectorAll('input[name="userType"], input[name="requestType"]')
+    .forEach(input => input.addEventListener('change', updatePickupVisibility));
+
+  // Validate date and time
+  pickupDate.addEventListener('change', () => {
+    const selectedDate = new Date(pickupDate.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      dateError.textContent = 'La data non può essere nel passato';
+      dateError.style.display = 'block';
+      pickupDate.value = '';
+    } else {
+      dateError.style.display = 'none';
+    }
+  });
+
+  pickupTime.addEventListener('change', () => {
+    const time = pickupTime.value;
+    const [hours, minutes] = time.split(':').map(Number);
+    const timeValue = hours * 60 + minutes;
+
+    if (timeValue < 9 * 60 || timeValue > 18 * 60) {
+      timeError.textContent = 'L\'orario deve essere tra le 09:00 e le 18:00';
+      timeError.style.display = 'block';
+      pickupTime.value = '';
+    } else {
+      timeError.style.display = 'none';
+    }
+  });
+
   // Event Listeners
   userTypeRadios.forEach(radio => {
     radio.addEventListener('change', function() {
@@ -105,6 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const requestId = `ID-${Math.floor(Math.random() * 100000)}`;
 
+    if (pickupWrapper.style.display === 'block') {
+      if (!pickupDate.value || !pickupTime.value) {
+        event.preventDefault();
+        alert('Per favore, indica data e ora di ritiro');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="material-icons">send</span> Invia';
+        return;
+      }
+    }
+
     const encodedMessage = encodeURIComponent(`
       Buongiorno, ecco una nuova richiesta da A.R. Auto snc:
       - ID richiesta: ${requestId}
@@ -115,8 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
       - Tipo richiesta: ${requestType}
       - Livello Urgenza: ${priority === 'alta' ? 'Alta Urgenza' : priority === 'media' ? 'Media Urgenza' : 'Bassa Urgenza'}
       - Dettagli: ${description}
+      ${pickupWrapper.style.display === 'block' ? `
+      - Data di ritiro: ${pickupDate.value}
+      - Ora di ritiro: ${pickupTime.value}` : ''}
     `);
-    
+
     const whatsappURL = `https://api.whatsapp.com/send?phone=393939393799&text=${encodedMessage}`;
     window.open(whatsappURL, '_blank');
 
