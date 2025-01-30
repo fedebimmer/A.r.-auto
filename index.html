@@ -10,6 +10,7 @@
 <body>
   <div class="background-image"></div>
   <div class="container">
+    <div id="welcomeMessage" class="welcome-message"></div>
     <header>
       Benvenuti in A.R. Auto snc
       <div class="notice">È richiesto un account WhatsApp per utilizzare questa pagina.</div>
@@ -31,7 +32,7 @@
       <input type="text" id="name" name="name" required>
       
       <div id="companyWrapper">
-        <label for="company">Ragione Sociale dell’Officina</label>
+        <label for="company">Ragione Sociale dell'Officina</label>
         <input type="text" id="company" name="company">
       </div>
       
@@ -51,16 +52,17 @@
       </div>
 
       <label for="priority">Priorità</label>
-      <select id="priority" name="priority" required>
-        <option value="bassa" style="color: green;">Bassa</option>
-        <option value="media" style="color: yellow;">Media</option>
-        <option value="alta" style="color: red;">Alta</option>
+      <select id="priority" name="priority">
+        <option value="bassa" style="color:green;">Bassa</option>
+        <option value="media" style="color:orange;" selected>Media</option>
+        <option value="alta" style="color:red;">Alta</option>
       </select>
-
+      
       <label for="description">Descrizione della Richiesta</label>
       <textarea id="description" name="description" maxlength="500"></textarea>
       
       <button type="submit" id="submitBtn">Invia</button>
+      <button type="button" id="clearDataBtn" class="clear-data">Cancella dati salvati</button>
     </form>
     <div id="successMessage" class="success-message">
       Richiesta inviata con successo su WhatsApp! Riceverai una risposta entro circa 30 minuti. ID richiesta: <span id="requestId"></span><br>

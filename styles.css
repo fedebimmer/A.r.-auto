@@ -61,7 +61,8 @@ label {
 }
 
 input[type="text"],
-textarea {
+textarea,
+select {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -106,6 +107,27 @@ button:hover {
   color: #007aff;
   margin-top: 20px;
   text-align: center;
+}
+
+.welcome-message {
+  text-align: center;
+  color: #007aff;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 1.1em;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: rgba(0, 122, 255, 0.1);
+  display: none;
+}
+
+.clear-data {
+  background-color: #ff3b30;
+  margin-top: 10px;
+}
+
+.clear-data:hover {
+  background-color: #dc2626;
 }
 
 /* Send animation */
