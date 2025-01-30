@@ -95,25 +95,20 @@
         <option value="alta">Alta Urgenza</option>
       </select>
       
-      <label for="description" class="field-label">
-        <span class="material-icons">description</span>
-        Descrizione della Richiesta
-      </label>
-      <textarea id="description" name="description" maxlength="500"></textarea>
-      
-      <div class="file-upload-container">
-        <label class="field-label">
-          <span class="material-icons">attach_file</span>
-          Allegati
+      <div class="description-header">
+        <label for="description" class="field-label">
+          <span class="material-icons">description</span>
+          Quale ricambio stai cercando?
         </label>
-        <div class="file-upload-wrapper">
-          <label class="file-input-button">
-            <span class="material-icons">upload_file</span>
-            Seleziona file (max 3)
-            <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx">
-          </label>
-          <div id="fileList" class="file-list"></div>
+        <div class="description-subtitle">
+          <span class="material-icons arrow-down">arrow_downward</span>
+          Descrivi di quale ricambio hai bisogno
         </div>
+      </div>
+      <textarea id="description" name="description" maxlength="500"></textarea>
+      <div class="whatsapp-notice">
+        <span class="material-icons">info</span>
+        Dopo aver premuto 'Invia', verrai reindirizzato al nostro account WhatsApp. Lì potrai inviare documenti e foto per completare la tua richiesta.
       </div>
       
       <button type="submit" id="submitBtn">
