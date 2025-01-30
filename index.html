@@ -1,22 +1,36 @@
-<html lang="it">
+<html lang="it" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Richiesta Preventivo/Ordine</title>
   <link rel="stylesheet" href="styles.css">
-  <script defer src="script.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script defer src="script.js"></script>
 </head>
 <body>
+  <div class="theme-switch">
+    <span class="material-icons light-icon">light_mode</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+    <span class="material-icons dark-icon">dark_mode</span>
+  </div>
+  
   <div class="background-image"></div>
   <div class="container">
-    <div id="welcomeMessage" class="welcome-message"></div>
     <header>
+      <div id="welcomeMessage" class="welcome-message"></div>
       Benvenuti in A.R. Auto snc
-      <div class="notice">È richiesto un account WhatsApp per utilizzare questa pagina.</div>
+      <div class="notice"><span class="material-icons">whatsapp</span> È richiesto un account WhatsApp per utilizzare questa pagina.</div>
     </header>
+    
     <form id="requestForm" class="request-form">
-      <label>Seleziona:</label>
+      <label class="field-label">
+        <span class="material-icons">group</span>
+        Seleziona:
+      </label>
       <div class="request-type">
         <label>
           <input type="radio" name="userType" value="privato" checked>
@@ -28,18 +42,30 @@
         </label>
       </div>
       
-      <label for="name">Nome e Cognome</label>
+      <label for="name" class="field-label">
+        <span class="material-icons">person</span>
+        Chi sei? (Inserisci il tuo nome)
+      </label>
       <input type="text" id="name" name="name" required>
       
       <div id="companyWrapper">
-        <label for="company">Ragione Sociale dell'Officina</label>
+        <label for="company" class="field-label">
+          <span class="material-icons">business</span>
+          Ragione Sociale dell'Officina
+        </label>
         <input type="text" id="company" name="company">
       </div>
       
-      <label for="vehicle">Targa o Numero di Telaio del Veicolo</label>
+      <label for="vehicle" class="field-label">
+        <span class="material-icons">directions_car</span>
+        Targa o Numero di Telaio del Veicolo
+      </label>
       <input type="text" id="vehicle" name="vehicle" required style="text-transform: uppercase;">
       
-      <label>Tipo di richiesta</label>
+      <label class="field-label">
+        <span class="material-icons">category</span>
+        Tipo di richiesta
+      </label>
       <div class="request-type">
         <label>
           <input type="radio" name="requestType" value="Preventivo" checked>
@@ -51,21 +77,35 @@
         </label>
       </div>
 
-      <label for="priority">Priorità</label>
+      <label for="priority" class="field-label">
+        <span class="material-icons">priority_high</span>
+        Priorità
+      </label>
       <select id="priority" name="priority">
-        <option value="bassa" style="color:green;">Bassa</option>
-        <option value="media" style="color:orange;" selected>Media</option>
-        <option value="alta" style="color:red;">Alta</option>
+        <option value="bassa">Bassa</option>
+        <option value="media" selected>Media</option>
+        <option value="alta">Alta</option>
       </select>
       
-      <label for="description">Descrizione della Richiesta</label>
+      <label for="description" class="field-label">
+        <span class="material-icons">description</span>
+        Descrizione della Richiesta
+      </label>
       <textarea id="description" name="description" maxlength="500"></textarea>
       
-      <button type="submit" id="submitBtn">Invia</button>
-      <button type="button" id="clearDataBtn" class="clear-data">Cancella dati salvati</button>
+      <button type="submit" id="submitBtn">
+        <span class="material-icons">send</span>
+        Invia
+      </button>
+      <button type="button" id="clearDataBtn" class="clear-btn">
+        <span class="material-icons">delete</span>
+        Cancella dati salvati
+      </button>
     </form>
     <div id="successMessage" class="success-message">
-      Richiesta inviata con successo su WhatsApp! Riceverai una risposta entro circa 30 minuti. ID richiesta: <span id="requestId"></span><br>
+      <span class="material-icons success-icon">check_circle</span>
+      Richiesta inviata con successo su WhatsApp! Riceverai una risposta entro circa 30 minuti.<br>
+      ID richiesta: <span id="requestId"></span><br>
       Assicurati di inviare l'ordine su WhatsApp!
     </div>
   </div>
