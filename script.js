@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDataBtn = document.getElementById('clearDataBtn');
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
+  const fileInput = document.getElementById('fileInput');
+  const fileList = document.getElementById('fileList');
 
   // Local Storage keys
   const STORAGE_KEY = 'userFormData';
@@ -90,6 +92,120 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // File Upload Management
+  const maxFiles = 3;
+  const maxFileSize = 100 * 1024 * 1024; // 100MB in bytes
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+
+  let uploadedFiles = [];
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function createFilePreview(file) {
+    const reader = new FileReader();
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+    
+    const fileInfo = document.createElement('div');
+    fileInfo.className = 'file-info';
+    
+    const fileName = document.createElement('div');
+    fileName.className = 'file-name';
+    fileName.textContent = file.name;
+    
+    const fileSize = document.createElement('div');
+    fileSize.className = 'file-size';
+    fileSize.textContent = formatFileSize(file.size);
+    
+    fileInfo.appendChild(fileName);
+    fileInfo.appendChild(fileSize);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-file';
+    removeBtn.innerHTML = '<span class="material-icons">close</span>';
+    removeBtn.onclick = () => {
+      uploadedFiles = uploadedFiles.filter(f => f !== file);
+      fileItem.remove();
+      updateFileInputState();
+    };
+
+    if (file.type.startsWith('image/')) {
+      reader.onload = (e) => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'file-preview';
+        fileItem.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const icon = document.createElement('span');
+      icon.className = 'material-icons';
+      icon.textContent = 'description';
+      fileItem.appendChild(icon);
+    }
+
+    fileItem.appendChild(fileInfo);
+    fileItem.appendChild(removeBtn);
+    return fileItem;
+  }
+
+  function showError(message) {
+    const error = document.createElement('div');
+    error.className = 'file-error';
+    error.textContent = message;
+    fileList.appendChild(error);
+    setTimeout(() => error.remove(), 3000);
+  }
+
+  function updateFileInputState() {
+    const fileInputButton = document.querySelector('.file-input-button');
+    if (uploadedFiles.length >= maxFiles) {
+      fileInputButton.style.opacity = '0.5';
+      fileInputButton.style.pointerEvents = 'none';
+    } else {
+      fileInputButton.style.opacity = '1';
+      fileInputButton.style.pointerEvents = 'auto';
+    }
+  }
+
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    
+    files.forEach(file => {
+      if (uploadedFiles.length >= maxFiles) {
+        showError(`Massimo ${maxFiles} file consentiti`);
+        return;
+      }
+      
+      if (file.size > maxFileSize) {
+        showError(`Il file ${file.name} supera il limite di 100MB`);
+        return;
+      }
+      
+      if (!allowedTypes.includes(file.type)) {
+        showError(`Formato file non supportato: ${file.name}`);
+        return;
+      }
+      
+      uploadedFiles.push(file);
+      fileList.appendChild(createFilePreview(file));
+    });
+    
+    updateFileInputState();
+    fileInput.value = ''; // Reset input for future selections
+  });
+
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -114,10 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
       - Officina: ${company}
       - Veicolo: ${vehicle}
       - Tipo richiesta: ${requestType}
-      - Priorità: ${priority}
+      - Livello Urgenza: ${priority === 'alta' ? 'Alta Urgenza' : priority === 'media' ? 'Media Urgenza' : 'Bassa Urgenza'}
       - Dettagli: ${description}
     `);
 
+    // Add files to WhatsApp message if any are uploaded
+    if (uploadedFiles.length > 0) {
+      const fileNames = uploadedFiles.map(f => f.name).join(', ');
+      encodedMessage += `\nFile allegati: ${fileNames}`;
+    }
+    
     const whatsappURL = `https://api.whatsapp.com/send?phone=393939393799&text=${encodedMessage}`;
     window.open(whatsappURL, '_blank');
 

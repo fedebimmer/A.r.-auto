@@ -79,12 +79,20 @@
 
       <label for="priority" class="field-label">
         <span class="material-icons">priority_high</span>
-        Priorità
+        Quanto è urgente la tua richiesta?
+        <span class="priority-info">
+          <span class="material-icons info-icon">info</span>
+          <span class="info-tooltip">
+            Ti preghiamo di utilizzare l'opzione "Alta Urgenza" solo in caso di reale necessità, 
+            per permetterci di gestire al meglio tutte le richieste. 
+            Il tempo di elaborazione varia dai 5 ai 40 minuti in base al numero di richieste in attesa.
+          </span>
+        </span>
       </label>
       <select id="priority" name="priority">
-        <option value="bassa">Bassa</option>
-        <option value="media" selected>Media</option>
-        <option value="alta">Alta</option>
+        <option value="bassa">Bassa Urgenza</option>
+        <option value="media" selected>Media Urgenza</option>
+        <option value="alta">Alta Urgenza</option>
       </select>
       
       <label for="description" class="field-label">
@@ -92,6 +100,21 @@
         Descrizione della Richiesta
       </label>
       <textarea id="description" name="description" maxlength="500"></textarea>
+      
+      <div class="file-upload-container">
+        <label class="field-label">
+          <span class="material-icons">attach_file</span>
+          Allegati
+        </label>
+        <div class="file-upload-wrapper">
+          <label class="file-input-button">
+            <span class="material-icons">upload_file</span>
+            Seleziona file (max 3)
+            <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx">
+          </label>
+          <div id="fileList" class="file-list"></div>
+        </div>
+      </div>
       
       <button type="submit" id="submitBtn">
         <span class="material-icons">send</span>
