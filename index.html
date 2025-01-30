@@ -9,21 +9,21 @@
   <script defer src="script.js"></script>
 </head>
 <body>
-  <div class="theme-switch">
-    <span class="material-icons light-icon">light_mode</span>
-    <label class="switch">
-      <input type="checkbox" id="themeToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="material-icons dark-icon">dark_mode</span>
-  </div>
-  
-  <div class="background-image"></div>
   <div class="container">
     <header>
       <div id="welcomeMessage" class="welcome-message"></div>
       Benvenuti in A.R. Auto snc
       <div class="notice"><span class="material-icons">whatsapp</span> È richiesto un account WhatsApp per utilizzare questa pagina.</div>
+      
+      <!-- Theme toggle moved inside header -->
+      <div class="theme-switch">
+        <span class="material-icons light-icon">light_mode</span>
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider round"></span>
+        </label>
+        <span class="material-icons dark-icon">dark_mode</span>
+      </div>
     </header>
     
     <form id="requestForm" class="request-form">
