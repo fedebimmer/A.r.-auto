@@ -237,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Modify the existing shipping options update function
   function updateShippingOptions() {
     const shippingSection = document.getElementById('shippingSection');
     const userType = document.querySelector('input[name="userType"]:checked').value;
@@ -249,23 +248,92 @@ document.addEventListener('DOMContentLoaded', () => {
     const pickupInStoreOption = document.getElementById('pickupInStoreOption');
     const shippingOption = document.getElementById('shippingOption');
     const shippingAccordion = document.getElementById('shippingAccordion');
-    const shippingContent = shippingAccordion.nextElementSibling;
+    const shippingAccordionContent = shippingAccordion.nextElementSibling;
 
     // Reset accordion state
-    shippingAccordion.classList.remove('active');
-    shippingContent.classList.remove('active');
+    function resetAccordion() {
+      shippingAccordion.classList.remove('active');
+      shippingAccordionContent.classList.remove('active');
+      shippingAccordionContent.style.maxHeight = '0';
+      shippingAccordion.style.backgroundColor = '';
+      shippingAccordion.style.color = '';
+    }
+    resetAccordion();
 
+    // Function to update date and time fields visibility
+    function updateDateTimeFieldsVisibility() {
+      const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+      
+      if (shippingRadio.value === 'spedizione') {
+        // Disable and hide date and time fields when shipping is selected
+        dateTimeFields.style.display = 'none';
+        asapCheckbox.checked = false;
+        asapCheckbox.disabled = true;
+        shippingDate.value = '';
+        shippingTime.value = '';
+        shippingDate.disabled = true;
+        shippingTime.disabled = true;
+      } else {
+        // Enable and show date and time fields for pickup
+        dateTimeFields.style.display = 'flex';
+        asapCheckbox.disabled = false;
+        shippingDate.disabled = false;
+        shippingTime.disabled = false;
+      }
+    }
+
+    // Shipping Accordion Functionality
+    function setupShippingAccordion() {
+      shippingAccordion.removeEventListener('click', accordionHandler);
+      shippingAccordion.addEventListener('click', accordionHandler);
+    }
+
+    function accordionHandler() {
+      // Toggle active classes
+      shippingAccordion.classList.toggle('active');
+      shippingAccordionContent.classList.toggle('active');
+
+      // Dynamically adjust max-height when opening
+      if (shippingAccordionContent.classList.contains('active')) {
+        // Set max-height to accommodate all content
+        shippingAccordionContent.style.maxHeight = `${shippingAccordionContent.scrollHeight + 100}px`;
+        shippingAccordion.style.backgroundColor = 'var(--primary-color)';
+        shippingAccordion.style.color = 'white';
+      } else {
+        // Reset max-height and styling when closing
+        shippingAccordionContent.style.maxHeight = '0';
+        shippingAccordion.style.backgroundColor = '';
+        shippingAccordion.style.color = '';
+      }
+    }
+
+    // ASAP checkbox functionality
+    function setupASAPCheckbox() {
+      asapCheckbox.removeEventListener('change', asapCheckboxHandler);
+      asapCheckbox.addEventListener('change', asapCheckboxHandler);
+    }
+
+    function asapCheckboxHandler() {
+      dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
+      
+      // Clear date and time if ASAP is checked
+      if (asapCheckbox.checked) {
+        shippingDate.value = '';
+        shippingTime.value = '';
+      }
+    }
+
+    // Main logic for shipping options
     if (requestType === 'Ordine') {
       shippingSection.style.display = 'block';
 
-      // Show/hide options based on user type
       if (userType === 'privato') {
-        // For private users, only show pickup in-store
+        // Private user settings
         shippingOption.style.display = 'none';
         pickupInStoreOption.style.display = 'block';
         document.querySelector('input[name="shipping"][value="ritiro"]').checked = true;
         
-        // Remove pickup accordion for private users
+        // Remove pickup accordion
         document.getElementById('pickupWrapper').style.display = 'none';
         
         // Show date and time fields for private users
@@ -275,34 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
         shippingTime.disabled = false;
 
       } else if (userType === 'azienda') {
-        // For business users, show both shipping options
+        // Business user settings
         shippingOption.style.display = 'block';
         pickupInStoreOption.style.display = 'block';
 
-        // Function to update date and time fields visibility
-        function updateDateTimeFieldsVisibility() {
-          const shippingRadio = document.querySelector('input[name="shipping"]:checked');
-          
-          if (shippingRadio.value === 'spedizione') {
-            // Disable and hide date and time fields when shipping is selected
-            dateTimeFields.style.display = 'none';
-            asapCheckbox.checked = false;
-            asapCheckbox.disabled = true;
-            shippingDate.value = '';
-            shippingTime.value = '';
-            shippingDate.disabled = true;
-            shippingTime.disabled = true;
-          } else {
-            // Enable and show date and time fields for pickup
-            dateTimeFields.style.display = 'flex';
-            asapCheckbox.disabled = false;
-            shippingDate.disabled = false;
-            shippingTime.disabled = false;
-          }
-        }
-
-        // Add event listener to shipping radio buttons
+        // Add event listeners for shipping radio buttons
         document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+          radio.removeEventListener('change', updateDateTimeFieldsVisibility);
           radio.addEventListener('change', updateDateTimeFieldsVisibility);
         });
 
@@ -310,45 +357,20 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDateTimeFieldsVisibility();
       }
 
+      // Setup shipping accordion and ASAP checkbox
+      setupShippingAccordion();
+      setupASAPCheckbox();
+
     } else {
       // Hide shipping section for quotes
       shippingSection.style.display = 'none';
     }
-
-    // Shipping Accordion Functionality (Updated)
-    const shippingAccordionBtn = document.getElementById('shippingAccordion');
-    const shippingAccordionContent = shippingAccordionBtn.nextElementSibling;
-
-    shippingAccordionBtn.addEventListener('click', () => {
-      // Toggle active classes
-      shippingAccordionBtn.classList.toggle('active');
-      shippingAccordionContent.classList.toggle('active');
-
-      // Dynamically adjust max-height when opening
-      if (shippingAccordionContent.classList.contains('active')) {
-        // Set max-height to accommodate all content
-        shippingAccordionContent.style.maxHeight = `${shippingAccordionContent.scrollHeight + 100}px`;
-        shippingAccordionBtn.style.backgroundColor = 'var(--primary-color)';
-        shippingAccordionBtn.style.color = 'white';
-      } else {
-        // Reset max-height and styling when closing
-        shippingAccordionContent.style.maxHeight = '0';
-        shippingAccordionBtn.style.backgroundColor = '';
-        shippingAccordionBtn.style.color = '';
-      }
-    });
-
-    // Add event listener to ASAP checkbox
-    asapCheckbox.addEventListener('change', () => {
-      dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
-      
-      // Clear date and time if ASAP is checked
-      if (asapCheckbox.checked) {
-        shippingDate.value = '';
-        shippingTime.value = '';
-      }
-    });
   }
+
+  // Call updateShippingOptions on page load and when relevant inputs change
+  updateShippingOptions();
+  form.querySelectorAll('input[name="userType"], input[name="requestType"]')
+    .forEach(input => input.addEventListener('change', updateShippingOptions));
 
   // Modify the form submission logic
   form.addEventListener('submit', function(event) {
@@ -659,13 +681,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('shippingTime').value = '';
     }
   });
-
-  // Add event listeners to update shipping options
-  form.querySelectorAll('input[name="userType"], input[name="requestType"]')
-    .forEach(input => input.addEventListener('change', updateShippingOptions));
-
-  // Initialize shipping options
-  updateShippingOptions();
 
   // Initialize
   loadTheme();
