@@ -237,6 +237,45 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
+  function updateShippingOptions() {
+    const shippingSection = document.getElementById('shippingSection');
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    const requestType = document.querySelector('input[name="requestType"]:checked').value;
+  
+    if (userType === 'azienda') {
+      shippingSection.style.display = 'block';
+      document.querySelectorAll('.shipping-option').forEach(option => {
+        option.style.display = 'block';
+      });
+    } else if (userType === 'privato' && requestType === 'Ordine') {
+      shippingSection.style.display = 'block';
+      document.querySelectorAll('.shipping-option').forEach(option => {
+        if (option.querySelector('input').value === 'ritiro') {
+          option.style.display = 'block';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    } else {
+      shippingSection.style.display = 'none';
+    }
+  }
+
+  document.querySelectorAll('input[name="userType"], input[name="requestType"]').forEach(input => {
+    input.addEventListener('change', updateShippingOptions);
+  });
+
+  document.querySelectorAll('.shipping-option input').forEach(input => {
+    input.addEventListener('change', function() {
+      document.querySelectorAll('.shipping-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      if (this.checked) {
+        this.closest('.shipping-option').classList.add('selected');
+      }
+    });
+  });
+
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -263,6 +302,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    const shippingOption = document.querySelector('input[name="shipping"]:checked')?.value || '';
+    const shippingDate = document.getElementById('shippingDate').value;
+    const shippingTime = document.getElementById('shippingTime').value;
+
+    let shippingText = '';
+    if (shippingOption) {
+      shippingText = `
+      - Modalità consegna: ${shippingOption === 'ritiro' ? 'Ritiro in sede' : 'Spedizione'}
+      - Data: ${shippingDate}
+      - Ora: ${shippingTime}`;
+    }
+
     const encodedMessage = encodeURIComponent(`
       Buongiorno, ecco una nuova richiesta da A.R. Auto snc:
       - ID richiesta: ${requestId}
@@ -276,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ${pickupWrapper.style.display === 'block' ? `
       - Data di ritiro: ${pickupDate.value}
       - Ora di ritiro: ${pickupTime.value}` : ''}
+      ${shippingText}
     `);
 
     const whatsappURL = `https://api.whatsapp.com/send?phone=393939393799&text=${encodedMessage}`;

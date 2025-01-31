@@ -171,6 +171,45 @@
         Dopo aver premuto 'Invia', verrai reindirizzato al nostro account WhatsApp. Lì potrai inviare documenti e foto per completare la tua richiesta.
       </div>
       
+      <div id="shippingSection" class="pickup-section" style="display: none;">
+        <div class="pickup-header">
+          <span class="material-icons">local_shipping</span>
+          Modalità di consegna
+        </div>
+        <div class="shipping-options">
+          <div class="shipping-option">
+            <label>
+              <input type="radio" name="shipping" value="ritiro" checked>
+              <span class="material-icons">store</span>
+              Ritiro in sede
+            </label>
+          </div>
+          <div class="shipping-option">
+            <label>
+              <input type="radio" name="shipping" value="spedizione">
+              <span class="material-icons">local_shipping</span>
+              Spedizione
+            </label>
+          </div>
+        </div>
+        <div class="date-time-fields">
+          <div class="date-time-field">
+            <label class="field-label">
+              <span class="material-icons">event</span>
+              Data
+            </label>
+            <input type="date" id="shippingDate" required>
+          </div>
+          <div class="date-time-field">
+            <label class="field-label">
+              <span class="material-icons">schedule</span>
+              Ora
+            </label>
+            <input type="time" id="shippingTime" required min="09:00" max="18:00">
+          </div>
+        </div>
+      </div>
+
       <button type="submit" id="submitBtn">
         <span class="material-icons">send</span>
         Invia
