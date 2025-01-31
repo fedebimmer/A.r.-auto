@@ -42,13 +42,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hide company wrapper by default
   companyWrapper.style.display = 'none';
 
+  // Save data to LocalStorage
+  function saveToLocalStorage() {
+    const formData = {
+      name: document.getElementById('name').value,
+      company: document.getElementById('company').value || '', 
+      vehicle: document.getElementById('vehicle').value,
+      description: document.getElementById('description').value,
+      userType: form.querySelector('input[name="userType"]:checked').value
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  }
+
   // Load saved data from LocalStorage
   function loadSavedData() {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
       const data = JSON.parse(savedData);
       document.getElementById('name').value = data.name || '';
-      document.getElementById('company').value = data.company || '';
+      document.getElementById('company').value = data.company || ''; 
       document.getElementById('vehicle').value = data.vehicle || '';
       document.getElementById('description').value = data.description || '';
       
@@ -69,18 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     }
-  }
-
-  // Save data to LocalStorage
-  function saveToLocalStorage() {
-    const formData = {
-      name: document.getElementById('name').value,
-      company: document.getElementById('company').value,
-      vehicle: document.getElementById('vehicle').value,
-      description: document.getElementById('description').value,
-      userType: form.querySelector('input[name="userType"]:checked').value
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }
 
   // Clear saved data
@@ -237,51 +237,58 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Update shipping options visibility based on user type and request type
+  // Modify shipping options visibility
   function updateShippingOptions() {
     const shippingSection = document.getElementById('shippingSection');
     const userType = document.querySelector('input[name="userType"]:checked').value;
     const requestType = document.querySelector('input[name="requestType"]:checked').value;
+    const asapCheckbox = document.getElementById('asapCheckbox');
+    const dateTimeFields = document.getElementById('dateTimeFields');
+    const shippingDate = document.getElementById('shippingDate');
+    const shippingTime = document.getElementById('shippingTime');
 
-    // Only show shipping options for orders, not for quotes
     if (requestType === 'Ordine') {
-      if (userType === 'azienda') {
-        shippingSection.style.display = 'block';
-        document.querySelectorAll('.shipping-option').forEach(option => {
-          option.style.display = 'block';
-        });
-      } else if (userType === 'privato') {
-        shippingSection.style.display = 'block';
-        document.querySelectorAll('.shipping-option').forEach(option => {
-          if (option.querySelector('input').value === 'ritiro') {
-            option.style.display = 'block';
-          } else {
-            option.style.display = 'none';
-          }
-        });
+      shippingSection.style.display = 'block';
+
+      // Show both shipping and pickup options for business and private users
+      document.querySelectorAll('.shipping-option').forEach(option => {
+        option.style.display = 'block';
+      });
+
+      // Update pickup/shipping options based on user type
+      if (userType === 'privato') {
+        // For private users, default to "Ritiro in sede"
+        document.querySelector('input[name="shipping"][value="spedizione"]').parentElement.style.display = 'none';
+        document.querySelector('input[name="shipping"][value="ritiro"]').checked = true;
       }
+
+      // Add event listener for ASAP checkbox
+      asapCheckbox.addEventListener('change', () => {
+        dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
+        
+        // Clear date and time if ASAP is checked
+        if (asapCheckbox.checked) {
+          shippingDate.value = '';
+          shippingTime.value = '';
+        }
+      });
+
     } else {
       // Hide shipping section for quotes
       shippingSection.style.display = 'none';
     }
+
+    // Reset shipping details when request type changes
+    const shippingOptions = document.querySelectorAll('input[name="shipping"]');
+    shippingOptions.forEach(option => {
+      option.addEventListener('change', () => {
+        asapCheckbox.checked = false;
+        dateTimeFields.style.display = 'flex';
+      });
+    });
   }
 
-  // Add event listeners for changes in user type and request type
-  document.querySelectorAll('input[name="userType"], input[name="requestType"]').forEach(input => {
-    input.addEventListener('change', updateShippingOptions);
-  });
-
-  document.querySelectorAll('.shipping-option input').forEach(input => {
-    input.addEventListener('change', function() {
-      document.querySelectorAll('.shipping-option').forEach(option => {
-        option.classList.remove('selected');
-      });
-      if (this.checked) {
-        this.closest('.shipping-option').classList.add('selected');
-      }
-    });
-  });
-
+  // Modify the form submission logic
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -298,41 +305,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const requestId = `ID-${Math.floor(Math.random() * 100000)}`;
 
-    if (pickupWrapper.style.display === 'block') {
-      if (!pickupDate.value || !pickupTime.value) {
-        event.preventDefault();
-        alert('Per favore, indica data e ora di ritiro');
+    // Validate required fields
+    if (!name || !vehicle || !description) {
+      alert('Per favore, compila tutti i campi obbligatori');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span class="material-icons">send</span> Invia';
+      return;
+    }
+
+    // Validate company field for business users
+    if (userType === 'azienda' && !company) {
+      alert('Per favore, inserisci la Ragione Sociale dell\'Officina');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span class="material-icons">send</span> Invia';
+      return;
+    }
+
+    // Prepare shipping/pickup details text for both private and business users
+    let shippingText = '';
+    if (requestType === 'Ordine') {
+      const shippingOption = document.querySelector('input[name="shipping"]:checked')?.value;
+      const asapCheckbox = document.getElementById('asapCheckbox');
+      const shippingDate = document.getElementById('shippingDate').value;
+      const shippingTime = document.getElementById('shippingTime').value;
+
+      // Validate shipping details
+      if (!shippingOption || (!asapCheckbox.checked && (!shippingDate || !shippingTime))) {
+        alert('Per favore, seleziona modalità e tempo di consegna/ritiro');
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span class="material-icons">send</span> Invia';
         return;
       }
-    }
 
-    const shippingOption = document.querySelector('input[name="shipping"]:checked')?.value || '';
-    const shippingDate = document.getElementById('shippingDate').value;
-    const shippingTime = document.getElementById('shippingTime').value;
-
-    let shippingText = '';
-    if (shippingOption) {
       shippingText = `
-      - Modalità consegna: ${shippingOption === 'ritiro' ? 'Ritiro in sede' : 'Spedizione'}
-      - Data: ${shippingDate}
-      - Ora: ${shippingTime}`;
+      - Modalità: ${shippingOption === 'ritiro' ? 'Ritiro in sede' : 'Spedizione'}
+      ${asapCheckbox.checked ? '- Consegna/Ritiro: Appena possibile' : `- Data: ${shippingDate}\n- Ora: ${shippingTime}`}`;
     }
 
+    // Existing WhatsApp message generation code...
     const encodedMessage = encodeURIComponent(`
       Buongiorno, ecco una nuova richiesta da A.R. Auto snc:
       - ID richiesta: ${requestId}
       - Tipo di cliente: ${userType}
       - Nome: ${name}
-      - Officina: ${company}
+      ${userType === 'azienda' ? `- Officina: ${company}` : ''}
       - Veicolo: ${vehicle}
       - Tipo richiesta: ${requestType}
       - Livello Urgenza: ${priority === 'alta' ? 'Alta Urgenza' : priority === 'media' ? 'Media Urgenza' : 'Bassa Urgenza'}
       - Dettagli: ${description}
-      ${pickupWrapper.style.display === 'block' ? `
-      - Data di ritiro: ${pickupDate.value}
-      - Ora di ritiro: ${pickupTime.value}` : ''}
       ${shippingText}
     `);
 
@@ -344,12 +364,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formData = {
       requestId,
-      name: document.getElementById('name').value,
-      userType: form.querySelector('input[name="userType"]:checked').value,
-      requestType: form.querySelector('input[name="requestType"]:checked').value,
-      vehicle: document.getElementById('vehicle').value,
-      priority: document.getElementById('priority').value,
-      description: document.getElementById('description').value
+      name,
+      userType,
+      requestType,
+      vehicle,
+      priority,
+      description,
+      company: userType === 'azienda' ? company : ''
     };
 
     saveRequestToHistory(formData);
@@ -562,6 +583,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  // Update date and time field visibility based on ASAP checkbox
+  const asapCheckbox = document.getElementById('asapCheckbox');
+  const dateTimeFields = document.getElementById('dateTimeFields');
+  
+  asapCheckbox.addEventListener('change', () => {
+    dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
+    
+    // Clear date and time if ASAP is checked
+    if (asapCheckbox.checked) {
+      document.getElementById('shippingDate').value = '';
+      document.getElementById('shippingTime').value = '';
+    }
+  });
+
+  // Add event listeners to update shipping options
+  form.querySelectorAll('input[name="userType"], input[name="requestType"]')
+    .forEach(input => input.addEventListener('change', updateShippingOptions));
+
+  // Initialize shipping options
+  updateShippingOptions();
 
   // Initialize
   loadTheme();

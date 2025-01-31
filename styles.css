@@ -1047,15 +1047,19 @@ input[type="time"]:focus {
 }
 
 .date-time-fields {
-  margin-top: 15px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
+  align-items: center;
 }
 
 .date-time-field {
   flex: 1;
   min-width: 200px;
+}
+
+#asapCheckbox {
+  margin-right: 8px;
 }
 
 /* Animations */

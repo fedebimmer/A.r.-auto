@@ -193,19 +193,27 @@
           </div>
         </div>
         <div class="date-time-fields">
-          <div class="date-time-field">
-            <label class="field-label">
-              <span class="material-icons">event</span>
-              Data
+          <div class="pickup-field">
+            <label>
+              <input type="checkbox" id="asapCheckbox" name="asap">
+              Appena possibile
             </label>
-            <input type="date" id="shippingDate" required>
           </div>
-          <div class="date-time-field">
-            <label class="field-label">
-              <span class="material-icons">schedule</span>
-              Ora
-            </label>
-            <input type="time" id="shippingTime" required min="09:00" max="18:00">
+          <div id="dateTimeFields">
+            <div class="date-time-field">
+              <label class="field-label">
+                <span class="material-icons">event</span>
+                Data
+              </label>
+              <input type="date" id="shippingDate">
+            </div>
+            <div class="date-time-field">
+              <label class="field-label">
+                <span class="material-icons">schedule</span>
+                Ora
+              </label>
+              <input type="time" id="shippingTime" min="09:00" max="18:00">
+            </div>
           </div>
         </div>
       </div>
