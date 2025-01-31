@@ -266,5 +266,65 @@
       </div>
     </div>
   </div>
+
+  <!-- Shipping Delivery Mode Modal (New) -->
+  <div id="shippingModal" class="shipping-modal" role="dialog" aria-modal="true" aria-labelledby="shippingModalTitle">
+    <div class="shipping-modal-content">
+      <div class="shipping-modal-header">
+        <h2 id="shippingModalTitle">
+          <span class="material-icons">local_shipping</span>
+          Modalità di consegna
+        </h2>
+        <button id="closeShippingModal" class="close-modal-btn" aria-label="Chiudi">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="shipping-modal-body">
+        <div class="shipping-options">
+          <div class="shipping-option" id="pickupInStoreOption">
+            <label>
+              <input type="radio" name="shipping" value="ritiro" checked>
+              <span class="material-icons">store</span>
+              Ritiro in sede
+            </label>
+          </div>
+          <div class="shipping-option" id="shippingOption">
+            <label>
+              <input type="radio" name="shipping" value="spedizione">
+              <span class="material-icons">local_shipping</span>
+              Spedizione
+            </label>
+          </div>
+        </div>
+        <div class="date-time-fields">
+          <div class="pickup-field">
+            <label>
+              <input type="checkbox" id="asapCheckbox" name="asap">
+              Appena possibile
+            </label>
+          </div>
+          <div id="dateTimeFields">
+            <div class="date-time-field">
+              <label class="field-label">
+                <span class="material-icons">event</span>
+                Data
+              </label>
+              <input type="date" id="shippingDate">
+            </div>
+            <div class="date-time-field">
+              <label class="field-label">
+                <span class="material-icons">schedule</span>
+                Ora
+              </label>
+              <input type="time" id="shippingTime" min="09:00" max="18:00">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="shipping-modal-footer">
+        <button id="confirmShippingModal" type="button">Conferma</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
