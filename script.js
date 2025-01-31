@@ -237,30 +237,36 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
+  // Update shipping options visibility based on user type and request type
   function updateShippingOptions() {
     const shippingSection = document.getElementById('shippingSection');
     const userType = document.querySelector('input[name="userType"]:checked').value;
     const requestType = document.querySelector('input[name="requestType"]:checked').value;
-  
-    if (userType === 'azienda') {
-      shippingSection.style.display = 'block';
-      document.querySelectorAll('.shipping-option').forEach(option => {
-        option.style.display = 'block';
-      });
-    } else if (userType === 'privato' && requestType === 'Ordine') {
-      shippingSection.style.display = 'block';
-      document.querySelectorAll('.shipping-option').forEach(option => {
-        if (option.querySelector('input').value === 'ritiro') {
+
+    // Only show shipping options for orders, not for quotes
+    if (requestType === 'Ordine') {
+      if (userType === 'azienda') {
+        shippingSection.style.display = 'block';
+        document.querySelectorAll('.shipping-option').forEach(option => {
           option.style.display = 'block';
-        } else {
-          option.style.display = 'none';
-        }
-      });
+        });
+      } else if (userType === 'privato') {
+        shippingSection.style.display = 'block';
+        document.querySelectorAll('.shipping-option').forEach(option => {
+          if (option.querySelector('input').value === 'ritiro') {
+            option.style.display = 'block';
+          } else {
+            option.style.display = 'none';
+          }
+        });
+      }
     } else {
+      // Hide shipping section for quotes
       shippingSection.style.display = 'none';
     }
   }
 
+  // Add event listeners for changes in user type and request type
   document.querySelectorAll('input[name="userType"], input[name="requestType"]').forEach(input => {
     input.addEventListener('change', updateShippingOptions);
   });
