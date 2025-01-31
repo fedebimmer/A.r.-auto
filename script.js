@@ -60,6 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.name) {
         welcomeMessage.textContent = `Bentornato, ${data.name}!`;
       }
+
+      // Update checkboxes based on description content
+      if (data.description) {
+        const selectedProducts = new Set(data.description.split('\n').filter(p => p.trim()));
+        document.querySelectorAll('.submenu-item input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = selectedProducts.has(checkbox.value);
+        });
+      }
     }
   }
 
@@ -313,6 +321,189 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   clearDataBtn.addEventListener('click', clearSavedData);
+
+  // Product Categories Data Structure
+  const productCategories = {
+    'Tagliando': [
+      'Filtro Aria',
+      'Filtro Olio',
+      'Filtro Abitacolo',
+      'Filtro Gasolio',
+      'Filtro Benzina',
+      'Candele',
+      'Olio Motore'
+    ],
+    'Sospensioni': [
+      'Ammortizzatore Ant SX',
+      'Ammortizzatore Ant DX',
+      'Ammortizzatore Post SX',
+      'Ammortizzatore Post DX',
+      'Supporti Superiori Ammortizzatori Ant',
+      'Supporti Superiori Ammortizzatori Post',
+      'Tiranti Barra Stabilizzatrice Anteriori',
+      'Tiranti Barra Stabilizzatrice Posteriori',
+      'Braccio Oscillante Anteriore SX',
+      'Braccio Oscillante Anteriore DX'
+    ],
+    'Freni': [
+      'Pastiglie Anteriori',
+      'Pastiglie Posteriori',
+      'Dischi Freno Anteriori',
+      'Dischi Freno Posteriori',
+      'Ganasce Posteriori',
+      'Cilindretti Ganasce',
+      'Kit Premontato Ganasce'
+    ],
+    'Elettrico': [
+      'Batteria',
+      'Alternatore',
+      'Motorino Avviamento'
+    ]
+  };
+
+  // Clear existing category buttons creation
+  const categoryContainer = document.getElementById('presetCategories');
+  categoryContainer.innerHTML = '';
+
+  // Create category buttons with submenus
+  Object.keys(productCategories).forEach(category => {
+    const categoryWrapper = document.createElement('div');
+    categoryWrapper.className = 'category-wrapper';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'category-btn';
+    button.innerHTML = `
+      <span class="material-icons">category</span>
+      ${category}
+    `;
+
+    const submenu = document.createElement('div');
+    submenu.className = 'submenu';
+
+    // Create checkboxes for each product
+    productCategories[category].forEach(product => {
+      const item = document.createElement('div');
+      item.className = 'submenu-item';
+      item.innerHTML = `
+        <label>
+          <input type="checkbox" value="${product}">
+          ${product}
+        </label>
+      `;
+
+      // Add checkbox event listener
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      checkbox.addEventListener('change', () => {
+        const descriptionField = document.getElementById('description');
+        const currentText = descriptionField.value;
+        const selectedProducts = new Set(currentText.split('\n').filter(p => p.trim()));
+
+        if (checkbox.checked) {
+          selectedProducts.add(product);
+        } else {
+          selectedProducts.delete(product);
+        }
+
+        descriptionField.value = Array.from(selectedProducts).join('\n');
+        showNotification(`${checkbox.checked ? 'Aggiunto' : 'Rimosso'}: ${product}`);
+      });
+
+      submenu.appendChild(item);
+    });
+
+    categoryWrapper.appendChild(button);
+    categoryWrapper.appendChild(submenu);
+    categoryContainer.appendChild(categoryWrapper);
+  });
+
+  // Update the category button click handler
+  document.querySelectorAll('.category-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      
+      // Close all other submenus
+      document.querySelectorAll('.submenu.active').forEach(menu => {
+        if (menu !== button.nextElementSibling) menu.classList.remove('active');
+      });
+      document.querySelectorAll('.category-btn.active').forEach(btn => {
+        if (btn !== button) btn.classList.remove('active');
+      });
+
+      const submenu = button.nextElementSibling;
+      const categoryName = button.textContent.trim();
+      
+      // Add header to submenu if it doesn't exist
+      if (!submenu.querySelector('.submenu-header')) {
+        const header = document.createElement('div');
+        header.className = 'submenu-header';
+        header.innerHTML = `
+          <span class="submenu-title">
+            <span class="material-icons">${getCategoryIcon(categoryName)}</span>
+            ${categoryName}
+          </span>
+          <button type="button" class="close-submenu">
+            <span class="material-icons">close</span>
+          </button>
+        `;
+        submenu.insertBefore(header, submenu.firstChild);
+        
+        // Add close button functionality
+        header.querySelector('.close-submenu').addEventListener('click', (e) => {
+          e.stopPropagation();
+          submenu.classList.remove('active');
+          button.classList.remove('active');
+        });
+      }
+
+      // Toggle current submenu
+      submenu.classList.toggle('active');
+      button.classList.toggle('active');
+    });
+  });
+
+  // Helper function to get the appropriate icon for each category
+  function getCategoryIcon(category) {
+    const icons = {
+      'Tagliando': 'build',
+      'Sospensioni': 'architecture',
+      'Freni': 'verified',
+      'Elettrico': 'electric_bolt',
+      'default': 'category'
+    };
+    return icons[category] || icons.default;
+  }
+
+  // Add Presets Button functionality
+  const presetsBtn = document.getElementById('presetsBtn');
+  const presetsContent = document.getElementById('presetsContent');
+
+  presetsBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    presetsBtn.classList.toggle('active');
+    presetsContent.classList.toggle('active');
+  });
+
+  // Close presets when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.presets-wrapper')) {
+      presetsBtn.classList.remove('active');
+      presetsContent.classList.remove('active');
+    }
+  });
+
+  // Close submenu when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.submenu') && !event.target.closest('.category-btn')) {
+      document.querySelectorAll('.submenu.active').forEach(menu => {
+        menu.classList.remove('active');
+      });
+      document.querySelectorAll('.category-btn.active').forEach(btn => {
+        btn.classList.remove('active');
+      });
+    }
+  });
 
   // Initialize
   loadTheme();

@@ -549,54 +549,232 @@ input[type="time"]:focus {
   display: block;
 }
 
-/* Animations */
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-6px);
-  }
-  60% {
-    transform: translateY(-4px);
-  }
+/* Preset Categories Styles */
+.presets-wrapper {
+  margin: 25px 0;
+  background: var(--container-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.presets-btn {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@keyframes send-animation {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+.presets-btn:hover {
+  background: var(--hover-color);
+  transform: translateY(-2px);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.presets-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-color);
 }
 
-@keyframes fadeOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+.presets-icon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
 }
 
-.send-animation {
-  animation: send-animation 0.5s ease-in-out;
+.presets-btn.active .presets-icon {
+  transform: rotate(180deg);
+}
+
+.presets-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  padding: 0 15px;
+}
+
+.presets-content.active {
+  max-height: 500px;
+  padding: 15px;
+}
+
+.preset-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 15px;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 20px;
+  color: var(--text-color);
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.category-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.category-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Submenu Styles */
+.submenu {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90%, 320px);
+  max-height: 80vh;
+  background: var(--container-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  padding: 20px;
+  margin-top: 0;
+  z-index: 1000;
+  display: none;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.submenu::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--container-bg);
+  opacity: 0.95;
+  backdrop-filter: blur(8px);
+  z-index: -1;
+}
+
+.submenu.active {
+  display: block;
+}
+
+.submenu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--input-border);
+}
+
+.submenu-title {
+  font-weight: 500;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.submenu-title .material-icons {
+  font-size: 20px;
+}
+
+.close-submenu {
+  background: var(--input-bg);
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 8px;
+  margin: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+}
+
+.close-submenu:hover {
+  background: var(--input-border);
+  transform: scale(1.1);
+}
+
+.submenu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+  background: var(--input-bg);
+}
+
+.submenu-item:hover {
+  background: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.submenu-item:hover label {
+  color: white;
+}
+
+.submenu-item label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+  margin: 0;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+
+.submenu-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--input-border);
+  border-radius: 4px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+/* Mobile optimizations for submenu */
+@media (max-width: 600px) {
+  .submenu {
+    width: 90%;
+    max-height: 70vh;
+    padding: 15px;
+  }
+
+  .submenu-item {
+    padding: 10px;
+  }
+
+  .submenu-item label {
+    font-size: 0.9em;
+  }
+
+  .close-submenu {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 /* Enhanced Mobile Optimization */
@@ -738,6 +916,20 @@ input[type="time"]:focus {
   .request-item {
     padding: 12px;
   }
+
+  .preset-categories {
+    gap: 8px;
+  }
+
+  .category-btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+
+  .presets-btn {
+    padding: 12px;
+    font-size: 0.9em;
+  }
 }
 
 /* Even smaller screens */
@@ -757,4 +949,58 @@ input[type="time"]:focus {
   button {
     padding: 10px 16px;
   }
+}
+
+/* Animations */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes send-animation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.send-animation {
+  animation: send-animation 0.5s ease-in-out;
+}
+
+#priority {
+  margin-bottom: 25px;
 }

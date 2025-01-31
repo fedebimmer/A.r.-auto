@@ -79,25 +79,21 @@
         </label>
       </div>
 
-      <label for="priority" class="field-label">
-        <span class="material-icons">priority_high</span>
-        Quanto è urgente la tua richiesta?
-        <span class="priority-info">
-          <span class="material-icons info-icon">info</span>
-          <span class="info-tooltip">
-            Ti preghiamo di utilizzare l'opzione "Alta Urgenza" solo in caso di reale necessità, 
-            per permetterci di gestire al meglio tutte le richieste. 
-            Il tempo di elaborazione varia dai 5 ai 40 minuti in base al numero di richieste in attesa.
-          </span>
-        </span>
-      </label>
-      <select id="priority" name="priority">
-        <option value="bassa">Bassa Urgenza</option>
-        <option value="media" selected>Media Urgenza</option>
-        <option value="alta">Alta Urgenza</option>
-      </select>
-      
-      <!-- Accordion menu for pickup date/time -->
+      <!-- Moved Categories section here -->
+      <div class="presets-wrapper">
+        <button type="button" class="presets-btn" id="presetsBtn">
+          <span class="material-icons">playlist_add</span>
+          Categorie
+          <span class="material-icons presets-icon">expand_more</span>
+        </button>
+        <div class="presets-content" id="presetsContent">
+          <div class="preset-categories" id="presetCategories">
+            <!-- Category buttons will be added here via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Pickup section remains here -->
       <div id="pickupWrapper" class="pickup-wrapper" style="display: none;">
         <button type="button" class="accordion" id="pickupAccordion">
           <span class="material-icons">schedule</span>
@@ -138,6 +134,26 @@
         </div>
       </div>
       <textarea id="description" name="description" maxlength="500"></textarea>
+
+      <!-- Moved Priority selection here -->
+      <label for="priority" class="field-label">
+        <span class="material-icons">priority_high</span>
+        Quanto è urgente la tua richiesta?
+        <span class="priority-info">
+          <span class="material-icons info-icon">info</span>
+          <span class="info-tooltip">
+            Ti preghiamo di utilizzare l'opzione "Alta Urgenza" solo in caso di reale necessità, 
+            per permetterci di gestire al meglio tutte le richieste. 
+            Il tempo di elaborazione varia dai 5 ai 40 minuti in base al numero di richieste in attesa.
+          </span>
+        </span>
+      </label>
+      <select id="priority" name="priority">
+        <option value="bassa">Bassa Urgenza</option>
+        <option value="media" selected>Media Urgenza</option>
+        <option value="alta">Alta Urgenza</option>
+      </select>
+      
       <div class="whatsapp-notice">
         <span class="material-icons">info</span>
         Dopo aver premuto 'Invia', verrai reindirizzato al nostro account WhatsApp. Lì potrai inviare documenti e foto per completare la tua richiesta.
