@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Local Storage keys
   const STORAGE_KEY = 'userFormData';
   const THEME_KEY = 'theme';
+  const HISTORY_KEY = 'requestHistory';
 
   // Theme Management
   function loadTheme() {
@@ -158,6 +159,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Notification System
+  function showNotification(message, duration = 3000) {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `
+      <span class="material-icons">info</span>
+      ${message}
+    `;
+    
+    notifications.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.add('fade-out');
+      setTimeout(() => notification.remove(), 300);
+    }, duration);
+  }
+
+  // Request History Management
+  function saveRequestToHistory(formData) {
+    const history = getRequestHistory();
+    const timestamp = new Date().toLocaleString();
+    
+    const request = {
+      id: formData.requestId,
+      timestamp,
+      name: formData.name,
+      userType: formData.userType,
+      requestType: formData.requestType,
+      vehicle: formData.vehicle,
+      priority: formData.priority,
+      description: formData.description
+    };
+    
+    history.unshift(request);
+    // Keep only last 10 requests
+    if (history.length > 10) history.pop();
+    
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    updateHistoryDisplay();
+    showNotification('Richiesta salvata con successo');
+  }
+
+  function getRequestHistory() {
+    const history = localStorage.getItem(HISTORY_KEY);
+    return history ? JSON.parse(history) : [];
+  }
+
+  function updateHistoryDisplay() {
+    const historyContainer = document.getElementById('requestHistory');
+    const history = getRequestHistory();
+    
+    if (history.length === 0) {
+      historyContainer.innerHTML = '<p class="no-requests">Nessuna richiesta salvata.</p>';
+      return;
+    }
+    
+    historyContainer.innerHTML = history.map(request => `
+      <div class="request-item">
+        <h3>Richiesta ${request.id}</h3>
+        <p><strong>Data:</strong> ${request.timestamp}</p>
+        <p><strong>Cliente:</strong> ${request.name} (${request.userType})</p>
+        <p><strong>Tipo:</strong> ${request.requestType}</p>
+        <p><strong>Veicolo:</strong> ${request.vehicle}</p>
+        <p><strong>Urgenza:</strong> ${request.priority}</p>
+        <p><strong>Descrizione:</strong> ${request.description}</p>
+      </div>
+    `).join('');
+  }
+
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -205,6 +276,18 @@ document.addEventListener('DOMContentLoaded', () => {
     requestIdSpan.textContent = requestId;
     successMessage.style.display = 'block';
 
+    const formData = {
+      requestId,
+      name: document.getElementById('name').value,
+      userType: form.querySelector('input[name="userType"]:checked').value,
+      requestType: form.querySelector('input[name="requestType"]:checked').value,
+      vehicle: document.getElementById('vehicle').value,
+      priority: document.getElementById('priority').value,
+      description: document.getElementById('description').value
+    };
+
+    saveRequestToHistory(formData);
+
     setTimeout(() => {
       submitBtn.disabled = false;
       submitBtn.innerHTML = '<span class="material-icons">send</span> Invia';
@@ -234,4 +317,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize
   loadTheme();
   loadSavedData();
+  updateHistoryDisplay();
 });
