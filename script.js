@@ -237,24 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Shipping Accordion Functionality
-  const shippingAccordion = document.getElementById('shippingAccordion');
-  const shippingContent = shippingAccordion.nextElementSibling;
-
-  shippingAccordion.addEventListener('click', () => {
-    shippingAccordion.classList.toggle('active');
-    const isActive = shippingAccordion.classList.contains('active');
-    shippingContent.classList.toggle('active', isActive);
-
-    // Dynamically adjust max-height when opening
-    if (isActive) {
-      // Set a larger max-height to accommodate all content
-      shippingContent.style.maxHeight = `${shippingContent.scrollHeight + 100}px`;
-    } else {
-      shippingContent.style.maxHeight = '0';
-    }
-  });
-
   // Modify the existing shipping options update function
   function updateShippingOptions() {
     const shippingSection = document.getElementById('shippingSection');
@@ -286,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove pickup accordion for private users
         document.getElementById('pickupWrapper').style.display = 'none';
         
-        // Default to showing date time fields
+        // Show date and time fields for private users
         dateTimeFields.style.display = 'flex';
         asapCheckbox.disabled = false;
         shippingDate.disabled = false;
@@ -297,12 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
         shippingOption.style.display = 'block';
         pickupInStoreOption.style.display = 'block';
 
-        // Disable date and time when shipping is selected
-        const shippingRadio = document.querySelector('input[name="shipping"][value="spedizione"]');
-        
+        // Function to update date and time fields visibility
         function updateDateTimeFieldsVisibility() {
-          if (shippingRadio.checked) {
-            // Disable date and time fields, and uncheck ASAP
+          const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+          
+          if (shippingRadio.value === 'spedizione') {
+            // Disable and hide date and time fields when shipping is selected
             dateTimeFields.style.display = 'none';
             asapCheckbox.checked = false;
             asapCheckbox.disabled = true;
@@ -311,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             shippingDate.disabled = true;
             shippingTime.disabled = true;
           } else {
-            // Enable date and time fields
+            // Enable and show date and time fields for pickup
             dateTimeFields.style.display = 'flex';
             asapCheckbox.disabled = false;
             shippingDate.disabled = false;
@@ -333,15 +315,39 @@ document.addEventListener('DOMContentLoaded', () => {
       shippingSection.style.display = 'none';
     }
 
-    // Reset shipping details when request type changes
-    const shippingOptions = document.querySelectorAll('input[name="shipping"]');
-    shippingOptions.forEach(option => {
-      option.addEventListener('change', () => {
-        asapCheckbox.checked = false;
-        dateTimeFields.style.display = 'flex';
-      });
+    // Shipping Accordion Functionality (Updated)
+    const shippingAccordionBtn = document.getElementById('shippingAccordion');
+    const shippingAccordionContent = shippingAccordionBtn.nextElementSibling;
+
+    shippingAccordionBtn.addEventListener('click', () => {
+      // Toggle active classes
+      shippingAccordionBtn.classList.toggle('active');
+      shippingAccordionContent.classList.toggle('active');
+
+      // Dynamically adjust max-height when opening
+      if (shippingAccordionContent.classList.contains('active')) {
+        // Set max-height to accommodate all content
+        shippingAccordionContent.style.maxHeight = `${shippingAccordionContent.scrollHeight + 100}px`;
+        shippingAccordionBtn.style.backgroundColor = 'var(--primary-color)';
+        shippingAccordionBtn.style.color = 'white';
+      } else {
+        // Reset max-height and styling when closing
+        shippingAccordionContent.style.maxHeight = '0';
+        shippingAccordionBtn.style.backgroundColor = '';
+        shippingAccordionBtn.style.color = '';
+      }
     });
-    shippingAccordion.classList.add('shippingAccordion');
+
+    // Add event listener to ASAP checkbox
+    asapCheckbox.addEventListener('change', () => {
+      dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
+      
+      // Clear date and time if ASAP is checked
+      if (asapCheckbox.checked) {
+        shippingDate.value = '';
+        shippingTime.value = '';
+      }
+    });
   }
 
   // Modify the form submission logic
