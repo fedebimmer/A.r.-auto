@@ -237,7 +237,25 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Modify shipping options visibility
+  // Shipping Accordion Functionality
+  const shippingAccordion = document.getElementById('shippingAccordion');
+  const shippingContent = shippingAccordion.nextElementSibling;
+
+  shippingAccordion.addEventListener('click', () => {
+    shippingAccordion.classList.toggle('active');
+    const isActive = shippingAccordion.classList.contains('active');
+    shippingContent.classList.toggle('active', isActive);
+
+    // Dynamically adjust max-height when opening
+    if (isActive) {
+      // Set a larger max-height to accommodate all content
+      shippingContent.style.maxHeight = `${shippingContent.scrollHeight + 100}px`;
+    } else {
+      shippingContent.style.maxHeight = '0';
+    }
+  });
+
+  // Modify the existing shipping options update function
   function updateShippingOptions() {
     const shippingSection = document.getElementById('shippingSection');
     const userType = document.querySelector('input[name="userType"]:checked').value;
@@ -246,32 +264,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateTimeFields = document.getElementById('dateTimeFields');
     const shippingDate = document.getElementById('shippingDate');
     const shippingTime = document.getElementById('shippingTime');
+    const pickupInStoreOption = document.getElementById('pickupInStoreOption');
+    const shippingOption = document.getElementById('shippingOption');
+    const shippingAccordion = document.getElementById('shippingAccordion');
+    const shippingContent = shippingAccordion.nextElementSibling;
+
+    // Reset accordion state
+    shippingAccordion.classList.remove('active');
+    shippingContent.classList.remove('active');
 
     if (requestType === 'Ordine') {
       shippingSection.style.display = 'block';
 
-      // Show both shipping and pickup options for business and private users
-      document.querySelectorAll('.shipping-option').forEach(option => {
-        option.style.display = 'block';
-      });
-
-      // Update pickup/shipping options based on user type
+      // Show/hide options based on user type
       if (userType === 'privato') {
-        // For private users, default to "Ritiro in sede"
-        document.querySelector('input[name="shipping"][value="spedizione"]').parentElement.style.display = 'none';
+        // For private users, only show pickup in-store
+        shippingOption.style.display = 'none';
+        pickupInStoreOption.style.display = 'block';
         document.querySelector('input[name="shipping"][value="ritiro"]').checked = true;
-      }
-
-      // Add event listener for ASAP checkbox
-      asapCheckbox.addEventListener('change', () => {
-        dateTimeFields.style.display = asapCheckbox.checked ? 'none' : 'flex';
         
-        // Clear date and time if ASAP is checked
-        if (asapCheckbox.checked) {
-          shippingDate.value = '';
-          shippingTime.value = '';
+        // Remove pickup accordion for private users
+        document.getElementById('pickupWrapper').style.display = 'none';
+        
+        // Default to showing date time fields
+        dateTimeFields.style.display = 'flex';
+        asapCheckbox.disabled = false;
+        shippingDate.disabled = false;
+        shippingTime.disabled = false;
+
+      } else if (userType === 'azienda') {
+        // For business users, show both shipping options
+        shippingOption.style.display = 'block';
+        pickupInStoreOption.style.display = 'block';
+
+        // Disable date and time when shipping is selected
+        const shippingRadio = document.querySelector('input[name="shipping"][value="spedizione"]');
+        
+        function updateDateTimeFieldsVisibility() {
+          if (shippingRadio.checked) {
+            // Disable date and time fields, and uncheck ASAP
+            dateTimeFields.style.display = 'none';
+            asapCheckbox.checked = false;
+            asapCheckbox.disabled = true;
+            shippingDate.value = '';
+            shippingTime.value = '';
+            shippingDate.disabled = true;
+            shippingTime.disabled = true;
+          } else {
+            // Enable date and time fields
+            dateTimeFields.style.display = 'flex';
+            asapCheckbox.disabled = false;
+            shippingDate.disabled = false;
+            shippingTime.disabled = false;
+          }
         }
-      });
+
+        // Add event listener to shipping radio buttons
+        document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+          radio.addEventListener('change', updateDateTimeFieldsVisibility);
+        });
+
+        // Initial call to set correct state
+        updateDateTimeFieldsVisibility();
+      }
 
     } else {
       // Hide shipping section for quotes
@@ -286,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dateTimeFields.style.display = 'flex';
       });
     });
+    shippingAccordion.classList.add('shippingAccordion');
   }
 
   // Modify the form submission logic
@@ -326,8 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (requestType === 'Ordine') {
       const shippingOption = document.querySelector('input[name="shipping"]:checked')?.value;
       const asapCheckbox = document.getElementById('asapCheckbox');
-      const shippingDate = document.getElementById('shippingDate').value;
-      const shippingTime = document.getElementById('shippingTime').value;
+      const shippingDate = document.getElementById('shippingDate');
+      const shippingTime = document.getElementById('shippingTime');
 
       // Validate shipping details
       if (!shippingOption || (!asapCheckbox.checked && (!shippingDate || !shippingTime))) {
@@ -339,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       shippingText = `
       - Modalità: ${shippingOption === 'ritiro' ? 'Ritiro in sede' : 'Spedizione'}
-      ${asapCheckbox.checked ? '- Consegna/Ritiro: Appena possibile' : `- Data: ${shippingDate}\n- Ora: ${shippingTime}`}`;
+      ${asapCheckbox.checked ? '- Consegna/Ritiro: Appena possibile' : `- Data: ${shippingDate.value}\n- Ora: ${shippingTime.value}`}`;
     }
 
     // Existing WhatsApp message generation code...

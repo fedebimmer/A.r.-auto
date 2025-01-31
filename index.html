@@ -172,47 +172,50 @@
       </div>
       
       <div id="shippingSection" class="pickup-section" style="display: none;">
-        <div class="pickup-header">
+        <button type="button" class="accordion shippingAccordion" id="shippingAccordion">
           <span class="material-icons">local_shipping</span>
           Modalità di consegna
-        </div>
-        <div class="shipping-options">
-          <div class="shipping-option">
-            <label>
-              <input type="radio" name="shipping" value="ritiro" checked>
-              <span class="material-icons">store</span>
-              Ritiro in sede
-            </label>
-          </div>
-          <div class="shipping-option">
-            <label>
-              <input type="radio" name="shipping" value="spedizione">
-              <span class="material-icons">local_shipping</span>
-              Spedizione
-            </label>
-          </div>
-        </div>
-        <div class="date-time-fields">
-          <div class="pickup-field">
-            <label>
-              <input type="checkbox" id="asapCheckbox" name="asap">
-              Appena possibile
-            </label>
-          </div>
-          <div id="dateTimeFields">
-            <div class="date-time-field">
-              <label class="field-label">
-                <span class="material-icons">event</span>
-                Data
+          <span class="material-icons accordion-icon">expand_more</span>
+        </button>
+        <div class="accordion-content">
+          <div class="shipping-options">
+            <div class="shipping-option" id="pickupInStoreOption">
+              <label>
+                <input type="radio" name="shipping" value="ritiro" checked>
+                <span class="material-icons">store</span>
+                Ritiro in sede
               </label>
-              <input type="date" id="shippingDate">
             </div>
-            <div class="date-time-field">
-              <label class="field-label">
-                <span class="material-icons">schedule</span>
-                Ora
+            <div class="shipping-option" id="shippingOption">
+              <label>
+                <input type="radio" name="shipping" value="spedizione">
+                <span class="material-icons">local_shipping</span>
+                Spedizione
               </label>
-              <input type="time" id="shippingTime" min="09:00" max="18:00">
+            </div>
+          </div>
+          <div class="date-time-fields">
+            <div class="pickup-field">
+              <label>
+                <input type="checkbox" id="asapCheckbox" name="asap">
+                Appena possibile
+              </label>
+            </div>
+            <div id="dateTimeFields">
+              <div class="date-time-field">
+                <label class="field-label">
+                  <span class="material-icons">event</span>
+                  Data
+                </label>
+                <input type="date" id="shippingDate">
+              </div>
+              <div class="date-time-field">
+                <label class="field-label">
+                  <span class="material-icons">schedule</span>
+                  Ora
+                </label>
+                <input type="time" id="shippingTime" min="09:00" max="18:00">
+              </div>
             </div>
           </div>
         </div>
